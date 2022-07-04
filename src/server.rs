@@ -121,7 +121,7 @@ const MAX_CONNECTIONS: usize = 250;
 ///
 /// `tokio::signal::ctrl_c()` can be used as the `shutdown` argument. This will
 /// listen for a SIGINT signal.
-pub async fn run(listener: TcpListener, shutdown: impl Future) {
+pub async fn run(listener: TcpListener) {
     // When the provided `shutdown` future completes, we must send a shutdown
     // message to all active connections. We use a broadcast channel for this
     // purpose. The call below ignores the receiver of the broadcast pair, and when
@@ -170,10 +170,6 @@ pub async fn run(listener: TcpListener, shutdown: impl Future) {
             if let Err(err) = res {
                 error!(cause = %err, "failed to accept");
             }
-        }
-        _ = shutdown => {
-            // The shutdown signal has been received.
-            info!("shutting down");
         }
     }
 

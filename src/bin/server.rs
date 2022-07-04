@@ -10,7 +10,7 @@ use mini_redis::{server, DEFAULT_PORT};
 
 use structopt::StructOpt;
 use tokio::net::TcpListener;
-use tokio::signal;
+// use tokio::signal;
 
 #[cfg(feature = "otel")]
 // To be able to set the XrayPropagator
@@ -28,7 +28,7 @@ use tracing_subscriber::{
     fmt, layer::SubscriberExt, util::SubscriberInitExt, util::TryInitError, EnvFilter,
 };
 
-#[tokio::main]
+#[tokio::main(flavor = "current_thread")]
 pub async fn main() -> mini_redis::Result<()> {
     set_up_logging()?;
 
@@ -38,7 +38,7 @@ pub async fn main() -> mini_redis::Result<()> {
     // Bind a TCP listener
     let listener = TcpListener::bind(&format!("127.0.0.1:{}", port)).await?;
 
-    server::run(listener, signal::ctrl_c()).await;
+    server::run(listener).await;
 
     Ok(())
 }

@@ -277,7 +277,7 @@ dependencies = [
  "http",
  "indexmap",
  "slab",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio-util 0.7.3",
  "tracing",
 ]
@@ -358,7 +358,7 @@ dependencies = [
  "itoa",
  "pin-project-lite",
  "socket2",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "tower-service",
  "tracing",
  "want",
@@ -372,7 +372,7 @@ checksum = "bbb958482e8c7be4bc3cf272a766a2b0bf1a6755e7a6ae777f017a31d11b13b1"
 dependencies = [
  "hyper",
  "pin-project-lite",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio-io-timeout",
 ]
 
@@ -477,7 +477,7 @@ dependencies = [
  "opentelemetry-otlp",
  "rand",
  "structopt",
- "tokio",
+ "tokio 1.19.2 (git+https://github.com/WasmEdge/tokio.git?branch=wasmedge)",
  "tokio-stream",
  "tracing",
  "tracing-futures",
@@ -494,6 +494,18 @@ dependencies = [
  "libc",
  "log",
  "wasi",
+ "windows-sys",
+]
+
+[[package]]
+name = "mio"
+version = "0.8.3"
+source = "git+https://github.com/WasmEdge/mio.git?branch=wasmedge#4779c585ce12b8d66268e4432d9dfb6d731ae680"
+dependencies = [
+ "libc",
+ "log",
+ "wasi",
+ "wasmedge_wasi_socket",
  "windows-sys",
 ]
 
@@ -570,7 +582,7 @@ dependencies = [
  "opentelemetry",
  "prost",
  "thiserror",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "tonic",
  "tonic-build",
 ]
@@ -969,14 +981,30 @@ dependencies = [
  "bytes",
  "libc",
  "memchr",
- "mio",
+ "mio 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "num_cpus",
  "once_cell",
  "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
  "socket2",
- "tokio-macros",
+ "tokio-macros 1.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "winapi",
+]
+
+[[package]]
+name = "tokio"
+version = "1.19.2"
+source = "git+https://github.com/WasmEdge/tokio.git?branch=wasmedge#c283eef58b76a76be22ea4654709691d46b11ec1"
+dependencies = [
+ "bytes",
+ "libc",
+ "memchr",
+ "mio 0.8.3 (git+https://github.com/WasmEdge/mio.git?branch=wasmedge)",
+ "once_cell",
+ "pin-project-lite",
+ "tokio-macros 1.8.0 (git+https://github.com/WasmEdge/tokio.git?branch=wasmedge)",
+ "wasmedge_wasi_socket",
  "winapi",
 ]
 
@@ -987,7 +1015,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "30b74022ada614a1b4834de765f9bb43877f910cc8ce4be40e89042c9223a8bf"
 dependencies = [
  "pin-project-lite",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1002,6 +1030,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio-macros"
+version = "1.8.0"
+source = "git+https://github.com/WasmEdge/tokio.git?branch=wasmedge#c283eef58b76a76be22ea4654709691d46b11ec1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "tokio-stream"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1009,7 +1047,7 @@ checksum = "df54d54117d6fdc4e4fea40fe1e4e566b3505700e148a6827e59b34b0d2600d9"
 dependencies = [
  "futures-core",
  "pin-project-lite",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1023,7 +1061,7 @@ dependencies = [
  "futures-sink",
  "log",
  "pin-project-lite",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1036,7 +1074,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "pin-project-lite",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "tracing",
 ]
 
@@ -1061,7 +1099,7 @@ dependencies = [
  "pin-project",
  "prost",
  "prost-derive",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio-stream",
  "tokio-util 0.6.10",
  "tower",
@@ -1096,7 +1134,7 @@ dependencies = [
  "pin-project-lite",
  "rand",
  "slab",
- "tokio",
+ "tokio 1.19.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio-util 0.7.3",
  "tower-layer",
  "tower-service",
@@ -1313,6 +1351,14 @@ name = "wasm-bindgen-shared"
 version = "0.2.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a89911bd99e5f3659ec4acf9c4d93b0a90fe4a2a11f15328472058edc5261be"
+
+[[package]]
+name = "wasmedge_wasi_socket"
+version = "0.4.1"
+source = "git+https://github.com/MediosZ/wasmedge_wasi_socket.git?branch=tcplistener#129a4d5e81e6705b2dd84b1e27642228f323970a"
+dependencies = [
+ "libc",
+]
 
 [[package]]
 name = "which"

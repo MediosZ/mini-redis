@@ -1,18 +1,14 @@
-use mini_redis::{client, server};
-use std::net::SocketAddr;
-use tokio::net::TcpListener;
-use tokio::task::JoinHandle;
-
+use mini_redis::client;
 /// A basic "hello world" style test. A server instance is started in a
 /// background task. A client instance is then established and set and get
 /// commands are sent to the server. The response is then evaluated
 #[tokio::test]
 async fn key_value_get_set() {
-    let (addr, _) = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     let mut client = client::connect(addr).await.unwrap();
     client.set("hello", "world".into()).await.unwrap();
-
+    tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
     let value = client.get("hello").await.unwrap().unwrap();
     assert_eq!(b"world", &value[..])
 }
@@ -21,7 +17,7 @@ async fn key_value_get_set() {
 /// a single channel subscription will be tested instead
 #[tokio::test]
 async fn receive_message_subscribed_channel() {
-    let (addr, _) = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     let client = client::connect(addr.clone()).await.unwrap();
     let mut subscriber = client.subscribe(vec!["hello".into()]).await.unwrap();
@@ -39,7 +35,7 @@ async fn receive_message_subscribed_channel() {
 /// test that a client gets messages from multiple subscribed channels
 #[tokio::test]
 async fn receive_message_multiple_subscribed_channels() {
-    let (addr, _) = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     let client = client::connect(addr.clone()).await.unwrap();
     let mut subscriber = client
@@ -70,7 +66,7 @@ async fn receive_message_multiple_subscribed_channels() {
 /// when unbscribing to all subscribed channels by submitting an empty vec
 #[tokio::test]
 async fn unsubscribes_from_channels() {
-    let (addr, _) = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     let client = client::connect(addr.clone()).await.unwrap();
     let mut subscriber = client
@@ -80,13 +76,4 @@ async fn unsubscribes_from_channels() {
 
     subscriber.unsubscribe(&[]).await.unwrap();
     assert_eq!(subscriber.get_subscribed().len(), 0);
-}
-
-async fn start_server() -> (SocketAddr, JoinHandle<()>) {
-    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let addr = listener.local_addr().unwrap();
-
-    let handle = tokio::spawn(async move { server::run(listener, tokio::signal::ctrl_c()).await });
-
-    (addr, handle)
 }

@@ -11,7 +11,7 @@ use tokio::time::{self, Duration};
 /// level.
 #[tokio::test]
 async fn key_value_get_set() {
-    let addr = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     // Establish a connection to the server
     let mut stream = TcpStream::connect(addr).await.unwrap();
@@ -68,7 +68,7 @@ async fn key_value_get_set() {
 async fn key_value_timeout() {
     tokio::time::pause();
 
-    let addr = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     // Establish a connection to the server
     let mut stream = TcpStream::connect(addr).await.unwrap();
@@ -121,7 +121,7 @@ async fn key_value_timeout() {
 
 #[tokio::test]
 async fn pub_sub() {
-    let addr = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     let mut publisher = TcpStream::connect(addr).await.unwrap();
 
@@ -244,7 +244,7 @@ async fn pub_sub() {
 
 #[tokio::test]
 async fn manage_subscription() {
-    let addr = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     let mut publisher = TcpStream::connect(addr).await.unwrap();
 
@@ -335,7 +335,7 @@ async fn manage_subscription() {
 // sends an unknown command
 #[tokio::test]
 async fn send_error_unknown_command() {
-    let addr = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     // Establish a connection to the server
     let mut stream = TcpStream::connect(addr).await.unwrap();
@@ -357,7 +357,7 @@ async fn send_error_unknown_command() {
 // sends an GET or SET command after a SUBSCRIBE
 #[tokio::test]
 async fn send_error_get_set_after_subscribe() {
-    let addr = start_server().await;
+    let addr = "127.0.0.1:6379";
 
     let mut stream = TcpStream::connect(addr).await.unwrap();
 
@@ -395,13 +395,4 @@ async fn send_error_get_set_after_subscribe() {
 
     stream.read_exact(&mut response).await.unwrap();
     assert_eq!(b"-ERR unknown command \'get\'\r\n", &response);
-}
-
-async fn start_server() -> SocketAddr {
-    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let addr = listener.local_addr().unwrap();
-
-    tokio::spawn(async move { server::run(listener, tokio::signal::ctrl_c()).await });
-
-    addr
 }
