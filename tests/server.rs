@@ -11,7 +11,7 @@ use tokio::time::{self, Duration};
 /// level.
 #[tokio::test]
 async fn key_value_get_set() {
-    let addr = "127.0.0.1:6379";
+    let addr = start_server().await;
 
     // Establish a connection to the server
     let mut stream = TcpStream::connect(addr).await.unwrap();
@@ -66,9 +66,9 @@ async fn key_value_get_set() {
 /// to advance to the application.
 #[tokio::test]
 async fn key_value_timeout() {
-    tokio::time::pause();
+    // tokio::time::pause();
 
-    let addr = "127.0.0.1:6379";
+    let addr = start_server().await;
 
     // Establish a connection to the server
     let mut stream = TcpStream::connect(addr).await.unwrap();
@@ -103,7 +103,7 @@ async fn key_value_timeout() {
     assert_eq!(b"$5\r\nworld\r\n", &response);
 
     // Wait for the key to expire
-    time::advance(Duration::from_secs(1)).await;
+    time::sleep(Duration::from_secs(1)).await;
 
     // Get a key, data is missing
     stream
@@ -121,7 +121,7 @@ async fn key_value_timeout() {
 
 #[tokio::test]
 async fn pub_sub() {
-    let addr = "127.0.0.1:6379";
+    let addr = start_server().await;
 
     let mut publisher = TcpStream::connect(addr).await.unwrap();
 
@@ -244,7 +244,7 @@ async fn pub_sub() {
 
 #[tokio::test]
 async fn manage_subscription() {
-    let addr = "127.0.0.1:6379";
+    let addr = start_server().await;
 
     let mut publisher = TcpStream::connect(addr).await.unwrap();
 
@@ -335,7 +335,7 @@ async fn manage_subscription() {
 // sends an unknown command
 #[tokio::test]
 async fn send_error_unknown_command() {
-    let addr = "127.0.0.1:6379";
+    let addr = start_server().await;
 
     // Establish a connection to the server
     let mut stream = TcpStream::connect(addr).await.unwrap();
@@ -357,7 +357,7 @@ async fn send_error_unknown_command() {
 // sends an GET or SET command after a SUBSCRIBE
 #[tokio::test]
 async fn send_error_get_set_after_subscribe() {
-    let addr = "127.0.0.1:6379";
+    let addr = start_server().await;
 
     let mut stream = TcpStream::connect(addr).await.unwrap();
 
@@ -395,4 +395,13 @@ async fn send_error_get_set_after_subscribe() {
 
     stream.read_exact(&mut response).await.unwrap();
     assert_eq!(b"-ERR unknown command \'get\'\r\n", &response);
+}
+
+async fn start_server() -> SocketAddr {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+
+    tokio::spawn(async move { server::run(listener).await });
+
+    addr
 }
